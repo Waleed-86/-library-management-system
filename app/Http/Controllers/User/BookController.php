@@ -8,17 +8,18 @@ use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
-    // Show all books to user with search
     public function index(Request $request)
     {
         $query = Book::query();
 
-        // Search by title, author or genre
-        if ($request->has('search') && $request->search != '') {
+        if ($request->filled('search')) {
             $search = $request->search;
-            $query->where('title', 'like', "%{$search}%")
+            // BUG FIX: Use where/orWhere properly with closure
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
                   ->orWhere('author', 'like', "%{$search}%")
                   ->orWhere('genre', 'like', "%{$search}%");
+            });
         }
 
         $books = $query->paginate(10);
