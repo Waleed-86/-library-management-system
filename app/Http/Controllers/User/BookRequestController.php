@@ -13,6 +13,11 @@ class BookRequestController extends Controller
     // Request a book
     public function store(Request $request)
     {
+        // Validate book_id
+        $request->validate([
+            'book_id' => 'required|exists:books,id',
+        ]);
+
         // Check if user already has 3 active requests
         $activeRequests = BookRequest::where('user_id', Auth::id())
                             ->whereIn('status', ['pending', 'approved'])
@@ -31,7 +36,14 @@ class BookRequestController extends Controller
 
         if ($alreadyRequested) {
             return redirect()->back()
-                    ->with('error', 'You already requested this book!');
+                    ->with('error', 'You have already requested this book!');
+        }
+
+        // Check if book is available
+        $book = \App\Models\Book::findOrFail($request->book_id);
+        if ($book->available_copies <= 0) {
+            return redirect()->back()
+                    ->with('error', 'Sorry! This book is not available right now!');
         }
 
         // Create the request
@@ -41,7 +53,8 @@ class BookRequestController extends Controller
             'status'  => 'pending',
         ]);
 
-        return redirect()->back()->with('success', 'Book requested successfully!');
+        return redirect()->back()
+                ->with('success', 'Book requested successfully! Please wait for admin approval.');
     }
 
     // Show my requests
