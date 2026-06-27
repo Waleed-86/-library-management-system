@@ -11,42 +11,36 @@ use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
-    /**
-     * Display the login view.
-     */
     public function create(): View
     {
         return view('auth.login');
     }
 
-    /**
-     * Handle an incoming authentication request.
-     */
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-
         $request->session()->regenerate();
 
-        // Redirect admin to admin dashboard
-        // Redirect student to books page
-        if (auth()->user()->is_admin) {
+        $user = auth()->user();
+
+        // BUG FIX: Check email verification first!
+        if (!$user->hasVerifiedEmail()) {
+            return redirect()->route('verification.notice');
+        }
+
+        // Then redirect based on role
+        if ($user->is_admin) {
             return redirect()->route('admin.dashboard');
         }
+
         return redirect()->route('user.books.index');
     }
 
-    /**
-     * Destroy an authenticated session.
-     */
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
-
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
-
         return redirect('/');
     }
-} 
+}
