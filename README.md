@@ -166,3 +166,29 @@ MAIL_FROM_NAME="Library System"
 ## 📄 License
 
 This project is open source and available under the [MIT License](LICENSE).
+
+## 📸 Screenshots
+
+### 🔐 Login Page
+
+![Login](public/screenshots/login.png)
+
+### 📊 Admin Dashboard
+
+![Dashboard](public/screenshots/dashboard.png)
+
+### 📚 Manage Books
+
+![Books](public/screenshots/books.png)
+
+### 📋 Book Requests
+
+![Requests](public/screenshots/requests.png)
+
+### 🔍 Browse Books (Student)
+
+![Browse](public/screenshots/browse.png)
+
+### 📝 My Requests (Student)
+
+![My Requests](public/screenshots/my-requests.png)
